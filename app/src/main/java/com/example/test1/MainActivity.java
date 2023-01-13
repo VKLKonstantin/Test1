@@ -1,90 +1,56 @@
 package com.example.test1;
 
-import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "lifecycle";
 
-    Button time, date, extra, inputButton;
-    TextView textView;
-    static final String ACCESS_MESSAGE="ACCESS_MESSAGE";
+    Button web, map, call;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
         setContentView(R.layout.activity_main);
+        web = findViewById(R.id.web);
+        map = findViewById(R.id.map);
+        call = findViewById(R.id.call);
 
-        time = findViewById(R.id.button_time);
-        date = findViewById(R.id.button_date);
-        extra = findViewById(R.id.button_extra);
-        inputButton = findViewById(R.id.inputButton);
-        textView = findViewById(R.id.textView);
+        web.setOnClickListener(this);
+        map.setOnClickListener(this);
+        call.setOnClickListener(this);
 
-        time.setOnClickListener(this);
-        date.setOnClickListener(this);
-        extra.setOnClickListener(this);
-        inputButton.setOnClickListener(this);
     }
 
-    ActivityResultLauncher<Intent> resultLauncher =
-            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                    new ActivityResultCallback<ActivityResult>() {
-                        @Override
-                        public void onActivityResult(ActivityResult result) {
-                            if (result.getResultCode() == Activity.RESULT_OK) {
-                                Intent intent = result.getData();
-                                String accessMessage = intent.getStringExtra(ACCESS_MESSAGE);
-                                textView.setText(accessMessage);
-                            }
-                        }
-                    }
-            );
 
     @Override
     public void onClick(View view) {
         Intent intent;
         switch (view.getId()) {
-            case R.id.button_time:
-                intent = new Intent("action.time");
+            case R.id.web:
+                intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://site-test.spatium.io"));
                 startActivity(intent);
                 break;
-            case R.id.button_date:
-                intent = new Intent("action.date");
+            case R.id.map:
+                intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("geo:-0.45609946, -90.26607513"));
                 startActivity(intent);
                 break;
-            case R.id.button_extra:
-                intent = new Intent(this, MainActivity3.class);
-                intent.putExtra("key", "LLL");
+            case R.id.call:
+                intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:12345"));
                 startActivity(intent);
                 break;
-            case R.id.inputButton:
-//                intent = new Intent(this, MainActivity4.class);
-//                getResult.launch(intent)
-//                startActivityForResult(intent, 1);
-//                ActivityResultLauncher<String> mGetContent =
-//                        registerForActivityResult(new ActivityResultContracts.GetContent(),
-//                                new ActivityResultCallback<Uri>() {
-//                                    @Override
-//                                    public void onActivityResult(Uri uri) {
-//                                        textView.setText(uri.);
-//                                    }
-//                                });
-//                mGetContent.launch("");
-                resultLauncher.launch(new Intent(this, MainActivity4.class));
-                break;
+
+
         }
     }
 
